@@ -13,9 +13,10 @@ class HashSet {
     this.occupied = 0;
   }
 
-  createNode(key, next = null) {
-    return { key, next };
-  }
+  // Instead of having a class to create nodes you can have a factoey function 
+  // createNode(key, next = null) {
+  //   return { key, next };
+  // }
 
   hash(key) {
     let hashCode = 0;

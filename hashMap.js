@@ -14,7 +14,7 @@ class HashMap {
     this.occupied = 0;
   }
 
-  // instead of having a class to create nodes you can have a factoey function
+  // Instead of having a class to create nodes you can have a factoey function
   // createNode(key, value = null, next = null) {
   //   return { key, value, next }
   // }
