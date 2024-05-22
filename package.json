@@ -1,0 +1,12 @@
+{
+  "name": "hashmaps",
+  "version": "1.0.0",
+  "description": "hashmaps and hashsets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nyle Blake",
+  "license": "ISC",
+  "type": "module"
+}

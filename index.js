@@ -1,172 +1,35 @@
-class Node {
-  constructor(key, value = null) {
-    this.key = key;
-    this.value = value;
-    this.next = null;
-  }
-}
+import { HashMap } from "./hashMap.js";
+import { HashSet } from "./hashSet.js";
 
-class HashMap {
-  constructor() {
-    this.bucketsArr = new Array(16).fill(null);
-    this.loadFactor = 0.75;
-    this.capacity = this.bucketsArr.length;
-    this.occupied = 0;
-  }
+let myMap = new HashMap()
 
-  hash(key) {
-    let hashCode = 0;
-    const primeNumber = 31;
+myMap.set('John', 'Smith'); // Sets a new node with key "John" and value "Smith"
+myMap.set('Alex', 'Lewis') // Sets a new node with key "Alex" and value "Lewis"
+myMap.resize() // Doubles the number of buckets in the hash map (This is called when loadFactor% or more buckets have been filled)
+console.log(myMap.hash('John')) // Returns a hash code from a key
+console.log(myMap.has('John')); // Returns true as key "John" is in the hash map
+console.log(myMap.get('John')); // Returns the value, "Smith" from the key "John"
+console.log(myMap.length()); // Returns the number of nodes in the hash map
+console.log(myMap.keys()); // Returns all keys in the hash map in an array
+console.log(myMap.values()); // Returns all values in the hash map in an array
+console.log(myMap.entries()); // Returns every key value pair in the hash map in an array
+myMap.remove('John'); // Removes the node which has the key "John"
 
-    for (let i = 0; i < key.length; i++) {
-      hashCode = (hashCode * primeNumber + key.charCodeAt(i)) % this.bucketsArr.length;
-    };
-    return hashCode;
-  }
+console.log(myMap);
+myMap.clear() // Clears all nodes from the hash map
+console.log(myMap)
 
-  resize() {
-    const oldArr = this.bucketsArr;
-    this.capacity *= 2;
-    this.bucketsArr = new Array(this.capacity).fill(null);
-    this.occupied = 0;
-    oldArr.forEach(bucket => {
-      let current = bucket
-      while (current !== null) {
-        this.set(current.key, current.value);
-        current = current.next
-      }
-    });
-  }
+let mySet = new HashSet()
 
-  set(key, value) {
-    if (this.occupied / this.capacity >= this.loadFactor) this.resize();
-    // resize
-    const bucketHash = this.hash(key)
-    if (!this.has(key)) {
-      // The key doesnt exist in the bucket
-      const newNode = new Node(key, value);
-      if (this.bucketsArr[bucketHash] == null) {
-        this.occupied++;
-        this.bucketsArr[bucketHash] = newNode;
-      } else {
-        let current = this.bucketsArr[bucketHash];
-        while (current.next !== null) {
-          current = current.next;
-        };
-        current.next = newNode
-      }
-    } else {
-      // The key exists in the hashmap, update value
-      let current = this.bucketsArr[bucketHash];
-      while (current !== null && current.key !== key) {
-        current = current.next;
-      };
-      if (current !== null) {
-        current.value = value;
-      };
-    }
-  }
+mySet.set('John'); // Sets a new node with key "John"
+mySet.set('Alex', 'Lewis') // Sets a new node with key "Alex"
+mySet.resize() // Doubles the number of buckets in the hash set (This is called when loadFactor% or more buckets have been filled)
+console.log(mySet.hash('John')) // Returns a hash code from a key
+console.log(mySet.has('John')); // Returns true as key "John" is in the hash set
+console.log(mySet.length()); // Returns the number of nodes in the hash set
+console.log(mySet.keys()); // Returns all keys in the hash map in an array
+mySet.remove('John'); // Removes the node which has the key "John"
 
-  has(key) {
-    const bucketHash = this.hash(key);
-    let current = this.bucketsArr[bucketHash];
-    while (current !== null) {
-      if (current.key == key) {
-        return true;
-      }
-      current = current.next;
-    }
-    return false;
-  };
-
-  get(key) {
-    const bucketHash = this.hash(key);
-    let current = this.bucketsArr[bucketHash];
-    while (current !== null) {
-      if (current.key == key) {
-        return current.value;
-      }
-      current = current.next;
-    }
-    return false;
-  }
-
-  remove(key) {
-    const bucketHash = this.hash(key);
-    let current = this.bucketsArr[bucketHash], previous = null;
-
-    while (current !== null && current.key !== key) {
-      previous = current;
-      current = current.next;
-    }
-
-    if (current === null) return; // key is not found
-
-    if (previous === null && current.next === null) { // checks if current == first node and there are NOT following nodes
-      // removes first node as it is the only one 
-      // decrements occupied buckets as bucket is now empty
-      this.occupied--
-      this.bucketsArr[bucketHash] = current.next;
-    } else if (previous === null) { // checks if current == first node and there ARE following nodes
-      // removes first node with nodes after it
-      this.bucketsArr[bucketHash] = current.next;
-    } else {
-      // remove node with nodes before and after
-      previous.next = current.next;
-    }
-  }
-
-  length() {
-    let count = 0;
-    this.bucketsArr.forEach(bucket => {
-      let current = bucket;
-      while (current !== null) {
-        count++;
-        current = current.next;
-      }
-    })
-    return count;
-  }
-
-  clear() {
-    this.bucketsArr = new Array(16).fill(null);
-    this.capacity = this.bucketsArr.length;
-    this.occupied = 0;
-  }
-
-  keys() {
-    let keysArr = [];
-    this.bucketsArr.forEach(bucket => {
-      let current = bucket;
-      while (current !== null) {
-        keysArr.push(current.key);
-        current = current.next;
-      }
-    })
-    return keysArr;
-  }
-
-  values() {
-    let valuesArr = [];
-    this.bucketsArr.forEach(bucket => {
-      let current = bucket;
-      while (current !== null) {
-        valuesArr.push(current.value);
-        current = current.next;
-      }
-    })
-    return valuesArr;
-  }
-
-  entries() {
-    let entriesArr = [];
-    this.bucketsArr.forEach(bucket => {
-      let current = bucket;
-      while (current !== null) {
-        entriesArr.push([current.key, current.value]);
-        current = current.next;
-      }
-    })
-    return entriesArr;
-  }
-}
+console.log(mySet)
+mySet.clear() // Clears all nodes from the hash set
+console.log(mySet)
